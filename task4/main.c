@@ -45,7 +45,7 @@ void print_strings(List* list)
 }
 void append(List** list, char* string)
 {
-	if(*list)
+	if(!*list)
 	{
 		*list = init_List();
 		if(!*list)
@@ -53,6 +53,7 @@ void append(List** list, char* string)
 			perror("List didn't init\n");
 			exit(-1);
 		}
+		(*list)->string = string;
 	}
 	else
 	{
@@ -77,7 +78,6 @@ int main()
 {
 	char string[STRING_MAX_SIZE];
 	List* list = NULL;
-	
 	printf("Enter your strings. After entering data type \".\" :\n");
 	while(*(fgets(string, STRING_MAX_SIZE, stdin)) != '.')
 	{
@@ -86,7 +86,7 @@ int main()
 		if(temp)
 		{
 			memcpy(temp, string, string_lenght);
-			temp[string_lenght-1]='\0';
+			temp[string_lenght - 1]='\0';
 			append(&list, temp);
 		}
 	}
