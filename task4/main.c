@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 //Errors type:
 //-1 can't allocate memory
 #define STRING_MAX_SIZE 255
-typedef struct
+typedef struct List
 {
 	char* string;
 	struct List* next;
@@ -59,12 +61,14 @@ void append(List** list, char* string)
 		{
 			last_list=last_list->next;
 		}
-		List* new_item = initList();
+		List* new_item = init_List();
+		new_item->string = string;
+		last_list->next = new_item;
 		if(!new_item)
 		{
 			perror("List can't add more string\n");
-			print_strings(list);
-			dispose(list);
+			print_strings(*list);
+			dispose(*list);
 			exit(-1);
 		}
 	}
@@ -74,7 +78,7 @@ int main()
 	char string[STRING_MAX_SIZE];
 	List* list = NULL;
 	
-	printf("Enter your strings. After entering data type "." :\n");
+	printf("Enter your strings. After entering data type \".\" :\n");
 	while(*(fgets(string, STRING_MAX_SIZE, stdin)) != '.')
 	{
 		size_t string_lenght = strlen(string);
@@ -83,7 +87,7 @@ int main()
 		{
 			memcpy(temp, string, string_lenght);
 			temp[string_lenght-1]='\0';
-			append(temp, &list);
+			append(&list, temp);
 		}
 	}
 	print_strings(list);
