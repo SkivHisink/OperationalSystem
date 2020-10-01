@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
 int write_uid_and_euid()
 {
 	printf("The real user ID : %d\nThe effective user ID : %d\n",
@@ -22,7 +21,7 @@ int main()
 {
 	if(write_uid_and_euid()==0)
 	{
-	setuid(geteuid());
+	setuid(getuid());
 	write_uid_and_euid();
 	}
 	return 0;
