@@ -7,7 +7,7 @@ int write_uid_and_euid()
 	FILE* file = fopen("file", "r");
 	if(file==NULL)
 	{
-		perror("File did't open");
+		perror("File didn't open");
 	}
 	else
 	{

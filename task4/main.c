@@ -4,6 +4,7 @@
 //Errors type:
 //-1 can't allocate memory
 #define STRING_MAX_SIZE 255
+
 typedef struct List
 {
 	char* string;
@@ -86,7 +87,10 @@ int main()
 		if(temp)
 		{
 			memcpy(temp, string, string_lenght);
-			temp[string_lenght - 1]='\0';
+			if(temp[string_lenght - 1]=='\n')
+			{
+				temp[string_lenght - 1]='\0';
+			}
 			append(&list, temp);
 		}
 	}

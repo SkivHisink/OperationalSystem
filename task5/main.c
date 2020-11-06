@@ -10,21 +10,21 @@
 #include <fcntl.h>
 
 typedef struct {
-	size_t* array = NULL;
-	size_t capacity_ = 0;
-	size_t size_ = 0;
+	size_t* array;
+	size_t capacity_;
+	size_t size_;
 } Struct_array;
 
 Struct_array* init_Struct_array(size_t init_size)
 {
-	Struct_array* a = (Struct_array*)malloc(sizeof(Struct_array));
-	if (a == NULL) {
-		return a;
+	Struct_array* new_s_array = (Struct_array*)malloc(sizeof(Struct_array));
+	if (new_s_array == NULL) {
+		return new_s_array;
 	}
-	a->array = (size_t*)malloc(init_size * sizeof(size_t));
-	a->size_ = 0;
-	a->capacity_ = init_size;
-	return a;
+	new_s_array->array = (size_t*)malloc(init_size * sizeof(size_t));
+	new_s_array->size_ = 0;
+	new_s_array->capacity_ = init_size;
+	return new_s_array;
 }
 
 void free_Struct_array(Struct_array* s_array)
