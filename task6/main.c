@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
-#define STANDART_SIZE 10
 #define FILE_NAME "file.txt"
+#define STANDART_SIZE 10
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
@@ -8,8 +8,8 @@
 #include "unistd.h"
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <errno.h>
-typedef struct array{
+
+typedef struct {
 	size_t* array;
 	size_t capacity_;
 	size_t size_;
@@ -19,13 +19,9 @@ Struct_array* init_Struct_array(size_t init_size)
 {
 	Struct_array* new_s_array = (Struct_array*)malloc(sizeof(Struct_array));
 	if (new_s_array == NULL) {
-		return NULL;
+		return new_s_array;
 	}
 	new_s_array->array = (size_t*)malloc(init_size * sizeof(size_t));
-	if(new_s_array->array == NULL) {
-		free(new_s_array);
-		return NULL;
-	}
 	new_s_array->size_ = 0;
 	new_s_array->capacity_ = init_size;
 	return new_s_array;
@@ -41,7 +37,8 @@ void free_Struct_array(Struct_array* s_array)
 
 void add(Struct_array* s_array, size_t element)
 {
-	if (s_array->size_ == s_array->capacity_) {
+	if (s_array->size_ == s_array->capacity_)
+	{
 		s_array->capacity_ *= 2;
 		size_t* data = (size_t*)realloc(s_array->array, s_array->capacity_ * sizeof(size_t));
 		if (data == NULL) {
@@ -52,35 +49,24 @@ void add(Struct_array* s_array, size_t element)
 	s_array->array[s_array->size_++] = element;
 }
 
-bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
+void read_file_and_add_arrays(int file, Struct_array* s_array)
 {
-	off_t position = lseek(file_descriptor, 0, SEEK_END);
-	if(position == -1) {
-		printf("Can't seek in file\n");
-		free_Struct_array(s_array);
-		close(file_descriptor);
-		return false;
+	size_t position = 0;
+	char sym;
+	int res = read(file, &sym, 1);
+	if(res!=0) {
+		printf("%c", sym);
 	}
-	size_t length = (size_t)position + 1;
-	lseek(file_descriptor, 0, SEEK_SET);
-	char* buffer = (char*)malloc(length);
-	if(buffer == NULL) {
-		printf("Bad memory allocation for buffer\n");
-		free_Struct_array(s_array);
-		close(file_descriptor);
-		return false;
-	}
-	read(file_descriptor, buffer, length);
-	for(int i = 0;i < length; ++i) {
-		if(buffer[i] == '\n') {
-			add(s_array, i+1);
+	while (res != 0) {
+		if (sym == '\n') {
+			add(s_array, position + 1);
 		}
+		++position;
+		res = read(file, &sym, 1);
+		printf("%c", sym);
 	}
-	free(buffer);
-	return true;
 }
-
-void find_string(int file_descriptor, Struct_array* s_array)
+void find_string(int file, Struct_array* s_array)
 {
 	bool exit_flag = false;
 	while (!exit_flag) {
@@ -106,9 +92,9 @@ void find_string(int file_descriptor, Struct_array* s_array)
 			end_pos = s_array->array[string_number];
 		}
 		for (int i = start_pos; i < end_pos; ++i) {
-			lseek(file_descriptor, i, SEEK_SET);
+			lseek(file, i, SEEK_SET);
 			char c;
-			read(file_descriptor, &c, 1);
+			read(file, &c, 1);
 			printf("%c", c);
 		}
 	}
@@ -116,23 +102,20 @@ void find_string(int file_descriptor, Struct_array* s_array)
 
 int main()
 {
-	int file_descriptor = open(FILE_NAME, O_RDONLY);
-	if (file_descriptor == -1) {
+	int file = open(FILE_NAME, O_RDONLY);
+	if (file == -1) {
 		printf("Programm can't open/read file %s\n", FILE_NAME);
-		perror("open():");
-		return -1;
+		return 1;
 	}
 	Struct_array* my_array = init_Struct_array(STANDART_SIZE);
 	if (my_array == NULL) {
 		printf("Programm can't allocate memory for array\n");
 		return 1;
 	}
-	if(read_file_and_add_arrays(file_descriptor, my_array)) {
-		find_string(file_descriptor, my_array);
-		free_Struct_array(my_array);
-		close(file_descriptor);
-		return 0;
-	}
-	return 2;
+	read_file_and_add_arrays(file, my_array);
+	find_string(file, my_array);
+	free_Struct_array(my_array);
+	close(file);
+	return 0;
 }
 
