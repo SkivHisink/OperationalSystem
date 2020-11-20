@@ -129,7 +129,7 @@ void time_limited_entering(Struct_array* s_array, int file_descriptor)
 	number_of_file_descriptors = select(1, &descriptor_set, NULL, NULL, &time_value);
 	if (number_of_file_descriptors == 0) {
 		printf("Time is over. You didn't write any string number.\n");
-		for(int i=0; i<s_array->size;++i) {
+		for(int i=0; i<s_array->size_;++i) {
 			printLine(s_array, i, file_descriptor);
 		}
 		return;
