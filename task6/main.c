@@ -114,9 +114,7 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 void time_limited_entering(Struct_array* s_array, int file_descriptor)
 {
 	printf("You have 5 seconds to input number of string.\n");
-
-	bool not_enough_time = false;
-
+	
 	fd_set descriptor_set;//fd_set is used to represent file descriptor set.
 	FD_ZERO(&descriptor_set);
 	FD_SET(0, &descriptor_set);
@@ -131,22 +129,21 @@ void time_limited_entering(Struct_array* s_array, int file_descriptor)
 	number_of_file_descriptors = select(1, &descriptor_set, NULL, NULL, &time_value);
 	if (number_of_file_descriptors == 0) {
 		printf("Time is over. You didn't write any string number.\n");
-		not_enough_time = true;
-		for(int i-0; i<s_array->size;++i)
-		printLine(s_array, i, file_descriptor);
+		for(int i=0; i<s_array->size;++i) {
+			printLine(s_array, i, file_descriptor);
+		}
+		return;
 	}
-	if (not_enough_time == false) {
-		bool exit_flag = false;
-		while (!exit_flag) {
-			int strNumber;
-			int number_of_arguments = scanf("%d", &strNumber);
-			if (number_of_arguments != 1) {
-				int character;
-				while ((character = getchar()) != '\n'
-					&& character != EOF) {
-				}
-				printf("Wrong input\n");
-				continue;
+	bool exit_flag = false;
+	while (!exit_flag) {
+		int strNumber;
+		int number_of_arguments = scanf("%d", &strNumber);
+		if (number_of_arguments != 1) {
+			int character;
+			while ((character = getchar()) != '\n'
+				&& character != EOF) {}
+			printf("Wrong input\n");
+			continue;
 			}
 			if (strNumber == -1) {
 				exit_flag = true;
@@ -154,7 +151,6 @@ void time_limited_entering(Struct_array* s_array, int file_descriptor)
 			else {
 				printLine(s_array, strNumber, file_descriptor);
 			}
-		}
 	}
 }
 
