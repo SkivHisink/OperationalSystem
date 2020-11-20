@@ -170,7 +170,7 @@ int main()
 		return -2;
 	}
 	if (read_file_and_add_arrays(file_descriptor, my_array)) {
-		time_limited_entering(my_array, file_descriptor, file_descriptor);
+		time_limited_entering(my_array, file_descriptor);
 		free_Struct_array(my_array);
 		close(file_descriptor);
 		return 0;
