@@ -158,7 +158,7 @@ void time_limited_entering(Struct_array* s_array, int file_descriptor)
 
 int main()
 {
-	int file_descriptor = open("f.txt", O_RDONLY);
+	int file_descriptor = open(FILE_NAME, O_RDONLY);
 	if (file_descriptor == -1) {
 		printf("Programm can't open/read file %s\n", FILE_NAME);
 		perror("open():");
