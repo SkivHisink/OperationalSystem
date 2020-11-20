@@ -10,6 +10,7 @@
 #include <sys/select.h>
 #include <string.h>
 
+#define FILE_NAME "file.txt"
 #define STANDART_SIZE 10
 
 typedef struct {
