@@ -9,6 +9,7 @@
 #include <stropts.h>
 #include <sys/select.h>
 #include <string.h>
+#include <sys/mman.h>
 
 #define FILE_NAME "file.txt"
 #define STANDART_SIZE 10
@@ -94,8 +95,8 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 	}
 	size_t length = (size_t)position + 1;
 	lseek(file_descriptor, 0, SEEK_SET);
-	char* buffer = (char*)malloc(length);
-	if (buffer == NULL) {
+	char* buffer = (char*)mmap(0, length, PROT_READ, MAP_SHARED, file_descriptor, 0);
+	if (buffer == MAP_FAILED) {
 		printf("Bad memory allocation for buffer\n");
 		free_Struct_array(s_array);
 		close(file_descriptor);
@@ -107,7 +108,7 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 			add(s_array, i + 1);
 		}
 	}
-	free(buffer);
+	munmap(buffer, length);
 	return true;
 }
 
