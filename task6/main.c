@@ -177,6 +177,8 @@ int main()
 		int inf=time_limited_entering(my_array, file_descriptor);
 		if(inf==-1){
 			printf("Select() returned -1");
+			free_Struct_array(my_array);
+			close(file_descriptor);
 			return -3;
 		}
 		free_Struct_array(my_array);
