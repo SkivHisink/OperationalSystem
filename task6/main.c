@@ -170,6 +170,7 @@ int main()
 	Struct_array* my_array = init_Struct_array(STANDART_SIZE);
 	if (my_array == NULL) {
 		printf("Programm can't allocate memory for array\n");
+		close(file_descriptor);
 		return -2;
 	}
 	if (read_file_and_add_arrays(file_descriptor, my_array)) {
