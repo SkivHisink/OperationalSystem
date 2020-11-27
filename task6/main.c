@@ -128,7 +128,7 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 	//waiting until one or more of the file descriptors become "ready" for
 	//some class of I / O operation(e.g., input possible).
 	int number_of_file_descriptors;
-	number_of_file_descriptors = select(fd, &descriptor_set, NULL, NULL, &time_value);
+	number_of_file_descriptors = select(fd+1, &descriptor_set, NULL, NULL, &time_value);
 	bool exit_flag = false;
 	while(!exit_flag){
 		if(number_of_file_descriptors == -1 && errno != EINTR)
