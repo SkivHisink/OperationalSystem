@@ -9,6 +9,7 @@
 #include <stropts.h>
 #include <sys/select.h>
 #include <string.h>
+#include <errno.h>
 
 #define FILE_NAME "file.txt"
 #define STANDART_SIZE 10
@@ -117,7 +118,8 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 
 	fd_set descriptor_set;//fd_set is used to represent file descriptor set.
 	FD_ZERO(&descriptor_set);
-	FD_SET(0, &descriptor_set);
+	int fd;
+	FD_SET(fd, &descriptor_set);
 
 	struct timeval time_value;
 	time_value.tv_sec = 5;
@@ -126,20 +128,20 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 	//waiting until one or more of the file descriptors become "ready" for
 	//some class of I / O operation(e.g., input possible).
 	int number_of_file_descriptors;
-	number_of_file_descriptors = select(1, &descriptor_set, NULL, NULL, &time_value);
-	if(number_of_file_descriptors == -1)
-	{
-		return -1;
-	}
-	if (number_of_file_descriptors == 0) {
-		printf("Time is over. You didn't write any string number.\n");
-		for(int i=0; i<s_array->size_;++i) {
-			printLine(s_array, i, file_descriptor);
-		}
-		return 0;
-	}
+	number_of_file_descriptors = select(fd, &descriptor_set, NULL, NULL, &time_value);
 	bool exit_flag = false;
-	while (!exit_flag) {
+	while(!exit_flag){
+		if(number_of_file_descriptors == -1 && errno != EINTR)
+		{
+			return -1;
+		}
+		if (number_of_file_descriptors == 0) {
+			printf("Time is over. You didn't write any string number.\n");
+			for(int i=0; i<s_array->size_;++i) {
+				printLine(s_array, i, file_descriptor);
+			}
+			return 0;
+		}
 		int strNumber;
 		int number_of_arguments = scanf("%d", &strNumber);
 		if (number_of_arguments != 1) {
