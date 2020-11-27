@@ -112,10 +112,10 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 	return true;
 }
 
-void time_limited_entering(Struct_array* s_array, int file_descriptor)
+int time_limited_entering(Struct_array* s_array, int file_descriptor)
 {
 	printf("You have 5 seconds to input number of string.\n");
-	
+
 	fd_set descriptor_set;//fd_set is used to represent file descriptor set.
 	FD_ZERO(&descriptor_set);
 	FD_SET(0, &descriptor_set);
@@ -128,12 +128,16 @@ void time_limited_entering(Struct_array* s_array, int file_descriptor)
 	//some class of I / O operation(e.g., input possible).
 	int number_of_file_descriptors;
 	number_of_file_descriptors = select(1, &descriptor_set, NULL, NULL, &time_value);
+	if(number_of_file_descriptors == -1)
+	{
+		return -1;
+	}
 	if (number_of_file_descriptors == 0) {
 		printf("Time is over. You didn't write any string number.\n");
 		for(int i=0; i<s_array->size_;++i) {
 			printLine(s_array, i, file_descriptor);
 		}
-		return;
+		return 0;
 	}
 	bool exit_flag = false;
 	while (!exit_flag) {
@@ -153,6 +157,7 @@ void time_limited_entering(Struct_array* s_array, int file_descriptor)
 				printLine(s_array, strNumber, file_descriptor);
 			}
 	}
+	return 0;
 }
 
 int main()
@@ -169,12 +174,16 @@ int main()
 		return -2;
 	}
 	if (read_file_and_add_arrays(file_descriptor, my_array)) {
-		time_limited_entering(my_array, file_descriptor);
+		int inf=time_limited_entering(my_array, file_descriptor);
+		if(inf==-1){
+			printf("Select() returned -1");
+			return -3;
+		}
 		free_Struct_array(my_array);
 		close(file_descriptor);
 		return 0;
 	}
 	free_Struct_array(my_array);
 	close(file_descriptor);
-	return -3;
+	return -4;
 }
