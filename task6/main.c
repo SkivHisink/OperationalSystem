@@ -101,7 +101,13 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 		close(file_descriptor);
 		return false;
 	}
-	read(file_descriptor, buffer, length);
+	int num=1;
+	while((num=read(file_descriptor, buffer, length)) != 0){
+		if(num == -1 && errno !=EINTR) {
+			perror("read():");
+			return false;
+		}
+	}
 	for (int i = 0; i < length; ++i) {
 		if (buffer[i] == '\n') {
 			add(s_array, i + 1);
