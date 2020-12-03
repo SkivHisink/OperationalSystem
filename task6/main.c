@@ -61,27 +61,26 @@ void printLine(Struct_array* arr, int strNumber, int file_descriptor)
 	if (strNumber < 0 || strNumber >= arr->size_)
 	{
 		printf("Out of range\n");
+		return;
+	}
+
+	size_t start;
+	size_t end;
+	if (strNumber == 0)
+	{
+		start = 0;
+		end = arr->array[0];
 	}
 	else
 	{
-		size_t start;
-		size_t end;
-		if (strNumber == 0)
-		{
-			start = 0;
-			end = arr->array[0];
-		}
-		else
-		{
-			start = arr->array[strNumber - 1];
-			end = arr->array[strNumber];
-		}
-		lseek(file_descriptor, start, SEEK_SET);
-		char str[255];
-		read(file_descriptor, str, end - start);
-		str[end - start - 1] = '\0';
-		printf("%s\n", str);
+		start = arr->array[strNumber - 1];
+		end = arr->array[strNumber];
 	}
+	lseek(file_descriptor, start, SEEK_SET);
+	char str[255];
+	read(file_descriptor, str, end - start);
+	str[end - start - 1] = '\0';
+	printf("%s\n", str);
 }
 
 bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
