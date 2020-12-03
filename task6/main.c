@@ -56,9 +56,9 @@ void free_Struct_array(Struct_array* s_array) {
 	s_array->capacity_ = 0;
 }
 
-void printLine(Struct_array* arr, int strNumber, int file_descriptor)
+void printLine(Struct_array* arr, int stringNumber, int file_descriptor)
 {
-	if (strNumber < 0 || strNumber >= arr->size_)
+	if (stringNumber < 0 || stringNumber >= arr->size_)
 	{
 		printf("Out of range\n");
 		return;
@@ -66,15 +66,15 @@ void printLine(Struct_array* arr, int strNumber, int file_descriptor)
 
 	size_t start;
 	size_t end;
-	if (strNumber == 0)
+	if (stringNumber == 0)
 	{
 		start = 0;
 		end = arr->array[0];
 	}
 	else
 	{
-		start = arr->array[strNumber - 1];
-		end = arr->array[strNumber];
+		start = arr->array[stringNumber - 1];
+		end = arr->array[stringNumber];
 	}
 	lseek(file_descriptor, start, SEEK_SET);
 	char str[255];
