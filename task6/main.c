@@ -79,11 +79,10 @@ void print_line(Struct_array* arr, int stringNumber, int file_descriptor)
 	lseek(file_descriptor, start, SEEK_SET);
 	char str[255];
 	int num = 0;
-	while((num = read(file_descriptor, str, end - start)) != 0){
-		if(num == -1 && errno !=EINTR) {
-			perror("read():");
-			return;
-		}
+	num = read(file_descriptor, str, end - start);
+	if(num == -1 && errno != EINTR) {
+		perror("read():");
+		return;
 	}
 	str[end - start - 1] = '\0';
 	printf("%s\n", str);
@@ -103,16 +102,19 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 	char* buffer = (char*)malloc(length);
 	if (buffer == NULL) {
 		printf("Bad memory allocation for buffer\n");
-		free_Struct_array(s_array);
-		close(file_descriptor);
 		return false;
 	}
-	int num=1;
-	while((num=read(file_descriptor, buffer, length)) != 0){
+	int num = 0;
+	char additional_buffer[length];
+	int indx = 0;
+	while((num = read(file_descriptor, additional_buffer, length)) != 0){
 		if(num == -1 && errno !=EINTR) {
 			perror("read():");
+			free(buffer);
 			return false;
 		}
+		memcpy(buffer+indx, additional_buffer, num);
+		indx = num;
 	}
 	for (int i = 0; i < length; ++i) {
 		if (buffer[i] == '\n') {
@@ -154,7 +156,7 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 			return 0;
 		}
 		int stringNumber;
-		int number_of_arguments = scanf("%d", &strNumber);
+		int number_of_arguments = scanf("%d", &stringNumber);
 		if (number_of_arguments != 1) {
 			int character;
 			while ((character = getchar()) != '\n'
@@ -166,7 +168,7 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 				exit_flag = true;
 			}
 			else {
-				print_line(s_array, strNumber, file_descriptor);
+				print_line(s_array, stringNumber, file_descriptor);
 			}
 	}
 	return 0;

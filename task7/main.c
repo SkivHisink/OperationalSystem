@@ -10,6 +10,7 @@
 #include <sys/select.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <errno.h>
 
 #define FILE_NAME "file.txt"
 #define STANDART_SIZE 10
@@ -56,7 +57,7 @@ void free_Struct_array(Struct_array* s_array) {
 	s_array->capacity_ = 0;
 }
 
-void print_line(Struct_array* arr, int stingrNumber, int file_descriptor)
+void print_line(Struct_array* arr, int stringNumber, int file_descriptor)
 {
 	if (stringNumber < 0 || stringNumber >= arr->size_)
 	{
@@ -66,7 +67,7 @@ void print_line(Struct_array* arr, int stingrNumber, int file_descriptor)
 	{
 		size_t start;
 		size_t end;
-		if (strNumber == 0)
+		if (stringNumber == 0)
 		{
 			start = 0;
 			end = arr->array[0];
@@ -78,12 +79,11 @@ void print_line(Struct_array* arr, int stingrNumber, int file_descriptor)
 		}
 		lseek(file_descriptor, start, SEEK_SET);
 		char str[255];
-		int num = 1;
-		while((num=read(file_descriptor, str, end - start)) != 0){
-			if(num == -1 && errno !=EINTR) {
-				perror("read():");
-				return;
-			}
+		int num = 0;
+		num = read(file_descriptor, str, end - start);
+		if(num == -1 && errno != EINTR) {
+			perror("read():");
+			return;
 		}
 		str[end - start - 1] = '\0';
 		printf("%s\n", str);
@@ -155,7 +155,7 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 				exit_flag = true;
 			}
 			else {
-				printLine(s_array, stringNumber, file_descriptor);
+				print_line(s_array, stringNumber, file_descriptor);
 			}
 	}
 	return 0;
