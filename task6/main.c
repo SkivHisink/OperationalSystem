@@ -56,7 +56,7 @@ void free_Struct_array(Struct_array* s_array) {
 	s_array->capacity_ = 0;
 }
 
-void printLine(Struct_array* arr, int stringNumber, int file_descriptor)
+void print_line(Struct_array* arr, int stringNumber, int file_descriptor)
 {
 	if (stringNumber < 0 || stringNumber >= arr->size_)
 	{
@@ -78,7 +78,13 @@ void printLine(Struct_array* arr, int stringNumber, int file_descriptor)
 	}
 	lseek(file_descriptor, start, SEEK_SET);
 	char str[255];
-	read(file_descriptor, str, end - start);
+	int num = 0;
+	while((num = read(file_descriptor, str, end - start)) != 0){
+		if(num == -1 && errno !=EINTR) {
+			perror("read():");
+			return;
+		}
+	}
 	str[end - start - 1] = '\0';
 	printf("%s\n", str);
 }
@@ -143,11 +149,11 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 		if (number_of_file_descriptors == 0) {
 			printf("Time is over. You didn't write any string number.\n");
 			for(int i=0; i<s_array->size_;++i) {
-				printLine(s_array, i, file_descriptor);
+				print_line(s_array, i, file_descriptor);
 			}
 			return 0;
 		}
-		int strNumber;
+		int stringNumber;
 		int number_of_arguments = scanf("%d", &strNumber);
 		if (number_of_arguments != 1) {
 			int character;
@@ -156,11 +162,11 @@ int time_limited_entering(Struct_array* s_array, int file_descriptor)
 			printf("Wrong input\n");
 			continue;
 			}
-			if (strNumber == -1) {
+			if (stringNumber == -1) {
 				exit_flag = true;
 			}
 			else {
-				printLine(s_array, strNumber, file_descriptor);
+				print_line(s_array, strNumber, file_descriptor);
 			}
 	}
 	return 0;
