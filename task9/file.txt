@@ -1,0 +1,12 @@
+Notes
+On some other systems, the default path (used when the environment does not contain the variable PATH)
+has the current working directory listed after /bin and /usr/bin, as an anti-Trojan-horse measure.
+Linux uses here the traditional "current directory first" default path.
+The behavior of execlp() and execvp() when errors occur while attempting to execute the file is historic practice, 
+but has not traditionally been documented and is not specified by the POSIX standard. 
+BSD (and possibly other systems) do an automatic sleep and retry if ETXTBSY is encountered. 
+Linux treats it as a hard error and returns immediately.
+Traditionally, 
+the functions execlp() and execvp() ignored all errors except for the ones described above and ENOMEM and E2BIG, 
+upon which they returned. 
+They now return if any error other than the ones described above occurs.
