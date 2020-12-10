@@ -1,0 +1,22 @@
+There are two ways to create processes in Linux. One of them allows you to completely replace another process, without replacing the runtime. Alternatively, you can create a new process using the fork () system call. The call syntax is as follows:
+
+#include <sys / types>
+#include <unistd.h>
+pid_t fork (void);
+pid_t is a primitive data type that defines the ID of a process or process group. When fork () is called, a new process (child process) is spawned that is almost identical to the parent parent process. A child process inherits the following characteristics from a parent:
+segments of code, data and program stack;
+a file table that contains the states of the file descriptor flags that indicate whether the file is being read or written. In addition, the file table contains the current position of the read-write pointer;
+working and root directories;
+real and effective user number and group number;
+process priorities (the administrator can change them through nice);
+control terminal;
+signal mask;
+resource constraints;
+runtime information;
+shared memory segments.
+The descendant does not inherit the following traits from the parent:
+process identifier (PID, PPID);
+consumed CPU time (it is cleared);
+signals of the parent process that require a response;
+locked files (record locking).
+When fork () is called, two completely identical processes arise. All code after fork () is executed twice, both in the child and parent processes.
