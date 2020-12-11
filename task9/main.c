@@ -20,7 +20,6 @@ int fork_prog()
 	{
 		perror("fork() error:");
 		return 1;
-		break;
 	}
 	case 0:
 	{
@@ -31,7 +30,6 @@ int fork_prog()
 			return 2;
 		}
 		return 0;
-		break;
 	}
 	default:
 	{
