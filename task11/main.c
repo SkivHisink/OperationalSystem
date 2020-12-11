@@ -27,7 +27,7 @@ int execvpe(const char* file, char* const argv[], char* const envp[]) {
 int main(int argc, char* argv[]) {
     char* args[] = { "ARGS1", "ARGS2","ARGS3", NULL };
     char* envp[] = { "ENV1=wake", "ENV2=me", "ENV3=up:(", NULL };
-    if (execvpe("./printer", args, envp) == -1) 
+    if (execvpe("printer.c", args, envp) == -1) 
     {
         perror("execvpe(3) error:");
         return -1;
