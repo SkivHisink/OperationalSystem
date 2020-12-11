@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <extern.h>
 extern char **environ;
 
 int main(int argc, char *argv[]) {
