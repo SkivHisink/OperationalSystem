@@ -19,6 +19,7 @@ int fork_prog()
 	case -1:
 		perror("fork() error:");
 		return 1;
+			break;
 	case 0:
 		int execl_status = execl("/bin/cat", "cat", path, (char*)NULL); //The exec() family of functions replaces the current process image with a new process image.
 		if (execl_status == -1)
@@ -27,6 +28,7 @@ int fork_prog()
 			return 2;
 		}
 		return 0;
+			break;
 	default:
 		int status;
 		pid_t ChildPid;
@@ -55,6 +57,7 @@ int fork_prog()
 				printf("Child process was resumed\n");
 			}
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+			break;
 	}
 	return 0;
 }
