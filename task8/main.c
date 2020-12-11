@@ -13,9 +13,9 @@
 
 int defended_text_editor()
 {
-	int file = open("file.txt", O_RDWR);
+	int file_descriptor = open("file.txt", O_RDWR);
 
-	if (file == -1)
+	if (file_descriptor == -1)
 	{
 		perror("open(2) error");
 		return 1;
@@ -29,11 +29,11 @@ int defended_text_editor()
 	file_info.l_start = 0;
 	file_info.l_len = 0;
 
-	int returned = fcntl(file, F_GETLK, &file_info);
+	int returned = fcntl(file_descriptor, F_GETLK, &file_info);
 	if (returned == -1)
 	{
 		perror("fcntl(3) error");
-		int close_returned = close(fd);
+		int close_returned = close(file_descriptor);
 		if (close_returned == -1)
 		{
 			perror("close(1) error");
@@ -45,7 +45,7 @@ int defended_text_editor()
 		return 3;
 	}
 	file_info.l_type = F_WRLCK;
-	returned = fcntl(file, F_SETLK, &file_info);
+	returned = fcntl(file_descriptor, F_SETLK, &file_info);
 
 	if (returned == -1)
 	{
@@ -57,12 +57,12 @@ int defended_text_editor()
 	if (sysRes == -1)
 	{
 		perror("system(1) error");
-		int close_returned = close(fd);
+		int close_returned = close(file_descriptor);
 		if (close_returned == -1)
 		{
 			perror("close(1) error");
 		}
-		flock(file, LOCK_UN);
+		flock(file_descriptor, LOCK_UN);
 		return 5;
 	}
 	return 0;
