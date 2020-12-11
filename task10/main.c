@@ -13,20 +13,23 @@
 int fork_prog(int argc, char* argv[])
 {
 	char* path = "file.txt";
-	
+
 	if (argc < 2)
 	{
 		printf("Incorrect number of arguments\n");
 		return 4;
 	}
-	
+
 	pid_t child = fork();//creating child process
 
 	switch (child) {
 	case -1:
+	{
 		perror("fork() error:");
 		return 1;
+	}
 	case 0:
+	{
 		int execl_status = execvp(argv[1], &argv[1]);
 		if (execl_status == -1)
 		{
@@ -34,7 +37,9 @@ int fork_prog(int argc, char* argv[])
 			return 2;
 		}
 		return 0;
+	}
 	default:
+	{
 		int status;
 		pid_t ChildPid;
 		do
@@ -62,6 +67,8 @@ int fork_prog(int argc, char* argv[])
 				printf("Child process was resumed\n");
 			}
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		break;
+	}
 	}
 	return 0;
 }
