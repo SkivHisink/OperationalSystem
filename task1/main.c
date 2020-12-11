@@ -14,6 +14,7 @@ void make_group_owner();
 void print_core_limit();
 void print_dir();
 void print_env();
+void print_gu_ids();
 void print_p_ids();
 void print_ulimit();
 
@@ -139,7 +140,7 @@ void set_core_limit(char *arg) {
     }
 }
 
-voidset_ulimit(char *arg) {
+void set_ulimit(char *arg) {
     char *endptr = NULL;
     errno = 0;
     long newLimit = strtol(arg, &endptr, 10);
