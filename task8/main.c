@@ -52,7 +52,7 @@ int defended_text_editor()
 		perror("fcntl(..,F_SETLK,..) error");
 		return 4;
 	}
-	int sysRes = system("nano f.txt");
+	int sysRes = system("nano file2.txt");
 
 	if (sysRes == -1)
 	{
