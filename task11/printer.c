@@ -1,5 +1,5 @@
 #include <stdio.h>
-extern char **environ;
+char **environ;
 
 int main(int argc, char *argv[]) {
     printf("ARGV PARAMETERS:\n");
