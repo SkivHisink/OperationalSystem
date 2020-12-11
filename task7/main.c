@@ -109,7 +109,11 @@ bool read_file_and_add_arrays(int file_descriptor, Struct_array* s_array)
 			add(s_array, i + 1);
 		}
 	}
-	munmap(buffer, length);
+	if(munmap(buffer, length) == -1)
+	{
+		perror("munmap():");
+		return false;
+	}
 	return true;
 }
 
