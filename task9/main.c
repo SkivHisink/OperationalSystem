@@ -23,13 +23,9 @@ int fork_prog()
 	}
 	case 0:
 	{
-		int execl_status = execl("/bin/cat", "cat", path, (char*)NULL); //The exec() family of functions replaces the current process image with a new process image.
-		if (execl_status == -1)
-		{
-			perror("execl(3) error:");
-			return 2;
-		}
-		return 0;
+		int execl_status = execlp("cat", "cat", path, (char*)NULL); //The exec() family of functions replaces the current process image with a new process image.
+		perror("execl(3) error:");
+		return 2;
 	}
 	default:
 	{
@@ -55,7 +51,7 @@ int fork_prog()
 			{
 				printf("Signal is stopped. Signal that caused the child process to stop is %d\n", WSTOPSIG(status));//If WIFSTOPPED is true of status, this macro returns the signal number of the signal that caused the child process to stop.
 			}
-			else if (WIFCONTINUED(status)) //Given status from a call to waitpid, return true if the child process was resumed by delivery of SIGCONT.
+			else if(WIFCONTINUED(status)) //Given status from a call to waitpid, return true if the child process was resumed by delivery of SIGCOUNT.
 			{
 				printf("Child process was resumed\n");
 			}
