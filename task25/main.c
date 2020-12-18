@@ -67,7 +67,7 @@ int wait_for_child()
 	return 0;
 }
 
-int сomm_via_pipe()
+int сommViaPipe()
 {
 	int pipes_container[2];
 
