@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 			close_pipes(pipes_container);
 			return 4;
 		}
-		printf("hay2 %s\n", buffer);
+		printf("%s\n", buffer);
 		close_pipes(pipes_container);
 		return 1;
 	}
@@ -75,12 +75,7 @@ int main(int argc, char* argv[])
 			close_pipes(pipes_container);
 			return 4;
 		}
-<<<<<<< HEAD
-		change_to_upper(buffer, count);
-		printf("hay%s\n", buffer);
-=======
 		printf("%s\n", buffer);
->>>>>>> 0368933edfb3caca444686875ad887600724002e
 		close_pipes(pipes_container);
 		int status;
 		do
