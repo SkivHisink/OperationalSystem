@@ -51,12 +51,7 @@ int main(int argc, char* argv[])
 			close_pipes(pipes_container);
 			return 4;
 		}
-<<<<<<< HEAD
-		change_to_upper(buffer, count);
-		printf("hell %s\n", buffer);
-=======
 		printf("%s\n", buffer);
->>>>>>> cb1c18e85dc4562238e355ad191388c65fd2e759
 		close_pipes(pipes_container);
 		return 1;
 	}
@@ -70,12 +65,8 @@ int main(int argc, char* argv[])
 				return 3;
 			}
 		}
-<<<<<<< HEAD
-		printf("hell2 %s\n", buffer);
-=======
 		change_to_upper(buffer, count);
 		printf("%s\n", buffer);
->>>>>>> cb1c18e85dc4562238e355ad191388c65fd2e759
 		close_pipes(pipes_container);
 		int status;
 		do
