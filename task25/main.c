@@ -14,6 +14,10 @@ void change_to_upper(char* buff, size_t n)
 		buff[i] = toupper(buff[i]);
 }
 
+void mock_func(char* a, size_t b)
+{
+}
+
 int redirect(int read_fd, int write_fd, void (*editor)(char*, size_t))
 {
 	char buffer[STANDART_SIZE] = { 0 };
@@ -115,7 +119,7 @@ int сommunication_via_pipe()
 		return res ? 1 : 0;
 	}
 	}
-	if (redirect(STDIN_FILENO, pipes_container[0], void_editor))
+	if (redirect(STDIN_FILENO, pipes_container[0], mock_func))
 	{
 		close_pipes(pipes_container);
 		return EXIT_FAILURE;
