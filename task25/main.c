@@ -94,7 +94,7 @@ int commViaPipe()
 		do
 		{
 			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
-			if (ChildPid == -1)
+			if (!ChildPid === -1)
 			{
 				perror("waitpid(3) error:");
 				return 3;
