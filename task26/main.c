@@ -2,48 +2,51 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define BUFFER_SIZE 100
+#define STANDART_SIZE 100
 
-void make_upper(char* buff, size_t n)
+void change_to_upper(char* buff, size_t n)
 {
-	for(size_t i = 0; i < n; ++i)
+	for (size_t i = 0; i < n; ++i)
 		buff[i] = toupper(buff[i]);
 }
 
-int main()
+int comm_using_std_lib_funcs(FILE* input) 
 {
-    FILE* input = popen("cat input.txt", "r");
-    if (input == NULL)
-	{
-        perror("popen() error");
-        return EXIT_FAILURE;
-    }
+	char buffer[STANDART_SIZE];
+	size_t count = fread(buffer, sizeof(char), STANDART_SIZE, input);
 
-    char buf[BUFFER_SIZE];
-    size_t read_count = fread(buf, sizeof(char), BUFFER_SIZE, input);
-
-    if (ferror(input) == -1)
+	if (ferror(input) == -1)
 	{
-        perror("fread() error");
+		perror("fread()");
 		if (pclose(input) == -1)
 		{
 			perror("pclose() error");
 		}
-		return EXIT_FAILURE;
+		return 2;
 	}
 	if (pclose(input) == -1)
 	{
 		perror("pclose() error");
-		return EXIT_FAILURE;
+		return 3;
 	}
-    make_upper(buf, read_count);
-    fwrite(buf, read_count, 1, stdout);
+	change_to_upper(buffer, count);
+	fwrite(buffer, count, 1, stdout);
 
-    if (ferror(input) == -1)
+	if (ferror(input) == -1)
 	{
-        perror("fwrite() error");
-        return EXIT_FAILURE;
-    }
+		perror("fwrite() error");
+		return 4;
+	}
+	return 0;
+}
 
-    return EXIT_SUCCESS;
+int main()
+{
+	FILE* input = popen("cat file.txt", "r");
+	if (input == NULL)
+	{
+		perror("popen() error");
+		return 1;
+	}
+	return comm_using_std_lib_funcs(input);
 }
