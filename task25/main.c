@@ -96,7 +96,7 @@ int commViaPipe()
 			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
 			if (ChildPid == -1)
 			{
-				perror("waitpid(3) error:");
+				perror("waitpid(3)");
 				return 3;
 			}
 			if (WIFEXITED(status))//This macro returns a nonzero value if the child process terminated normally with exit or _exit.
