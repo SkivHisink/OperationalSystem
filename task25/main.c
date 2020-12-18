@@ -47,7 +47,7 @@ int main()
 	}
 	case 0:
 	{
-		while ((count = read(read_fd, buffer, STANDART_SIZE)) == -1)
+		while ((count = read(pipes_container[0], buffer, STANDART_SIZE)) == -1)
 		{
 			if (errno != EINTR)
 			{
@@ -60,7 +60,7 @@ int main()
 		return 0;
 	}
 	default:
-		if (write(write_fd, buffer, count) == -1)
+		if (write(pipes_container[1], buffer, count) == -1)
 		{
 			perror("write(3)");
 			return 4;
