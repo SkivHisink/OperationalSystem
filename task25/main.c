@@ -14,30 +14,10 @@ void change_to_upper(char* buff, size_t n)
 		buff[i] = toupper(buff[i]);
 }
 
-void mock_func(char* a, size_t b)
-{
-}
-
 int redirect(int read_fd, int write_fd, void (*editor)(char*, size_t))
 {
-	char buffer[STANDART_SIZE] = { 0 };
-	ssize_t count = 0;
 
-	while ((count = read(read_fd, buffer, STANDART_SIZE)) == -1)
-	{
-		if (errno != EINTR)
-		{
-			perror("read(3)");
-			return 3;
-		}
-	}
-	editor(buffer, count);
-
-	if (write(write_fd, buffer, count) == -1)
-	{
-		perror("write(3)");
-		return 4;
-	}
+	
 	return 0;
 }
 
@@ -53,20 +33,6 @@ void close_pipes(int pipes_container[2])
 	}
 }
 
-int wait_for_child()
-{
-	int ch_stat;
-	while (wait(&ch_stat) == -1)
-	{
-		if (errno != EINTR)
-		{
-			perror("wait(1)");
-			return 5;
-		}
-	}
-	return 0;
-}
-
 int main()
 {
 	int pipes_container[2];
@@ -76,6 +42,8 @@ int main()
 		perror("pipe(1)");
 		return -1;
 	}
+	char buffer[STANDART_SIZE] = { 0 };
+	ssize_t count = 0;
 	pid_t child = fork();
 	switch (child) {
 	case -1:
@@ -86,13 +54,28 @@ int main()
 	}
 	case 0:
 	{
-		int res = redirect(pipes_container[1], STDOUT_FILENO, change_to_upper);
+		while ((count = read(read_fd, buffer, STANDART_SIZE)) == -1)
+		{
+			if (errno != EINTR)
+			{
+				perror("read(3)");
+				return 3;
+			}
+		}
+		change_to_upper(buffer, count);
 		close_pipes(pipes_container);
-		printf("work");
-		return res ? 1 : 0;
+		return 0;
 	}
+	default:
+		if (write(write_fd, buffer, count) == -1)
+		{
+			perror("write(3)");
+			return 4;
+		}
+		close_pipes(pipes_container);
 		int status;
 		pid_t ChildPid;
+
 		do
 		{
 			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
@@ -113,17 +96,12 @@ int main()
 			{
 				printf("Signal is stopped. Signal that caused the child process to stop is %d\n", WSTOPSIG(status));//If WIFSTOPPED is true of status, this macro returns the signal number of the signal that caused the child process to stop.
 			}
-			else if (WIFCONTINUED(status)) //Given status f
-	if (redirect(STDIN_FILENO, pipes_container[0], mock_func))
-	{
-		close_pipes(pipes_container);
-		return 6;
+			else if (WIFCONTINUED(status)) //Given status from a call to waitpid, return true if the child process was resumed by delivery of SIGCOUNT.
+			{
+				printf("Child process was resumed\n");
+			}
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
-	if (wait_for_child())
-	{
-		perror("Error while waiting");
-		close_pipes(pipes_container);
-		return 7;
 	}
 	close_pipes(pipes_container);
 	return 0;
