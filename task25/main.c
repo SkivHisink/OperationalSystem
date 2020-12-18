@@ -126,7 +126,7 @@ int commViaPipe()
 	}
 	if (wait_for_child())
 	{
-		perror("Error while waiting);
+		perror("Error while waiting");
 		close_pipes(p_filedes);
 		return 7;
 	}
