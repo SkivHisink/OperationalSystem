@@ -27,7 +27,7 @@ void change_to_upper(char* buff, size_t n)
 
 int main(int argc, char* argv[])
 {
-	char buffer[STANDART_SIZE] = "";
+	char buffer[STANDART_SIZE] = "hello world";
 	int count = 0;
 	int pipes_container[2];
 	if (pipe(pipes_container) == -1)
@@ -55,20 +55,10 @@ int main(int argc, char* argv[])
 		}
 		change_to_upper(buffer, count);
 		printf("%s\n", buffer);
-		if (write(pipes_container[1], buffer, strlen(buffer) + 1) == -1)
-		{
-			perror("write(3)");
-			close_pipes(pipes_container);
-			return 4;
-		}
-		printf("%s\n", buffer);
-		close_pipes(pipes_container);
 		return 1;
 	}
 	default:
 	{
-		change_to_upper(buffer, count);
-		printf("%s\n", buffer);
 		if (write(pipes_container[1], buffer, strlen(buffer) + 1) == -1)
 		{
 			perror("write(3)");
