@@ -45,6 +45,16 @@ int main(int argc, char* argv[])
 	}
 	case 0:
 	{
+		while ((count = read(pipes_container[0], buffer, STANDART_SIZE)) == -1)
+		{
+			if (errno != EINTR)
+			{
+				perror("read(3)");
+				return 3;
+			}
+		}
+		change_to_upper(buffer, count);
+		printf("%s\n", buffer);
 		if (write(pipes_container[1], buffer, strlen(buffer) + 1) == -1)
 		{
 			perror("write(3)");
@@ -57,15 +67,14 @@ int main(int argc, char* argv[])
 	}
 	default:
 	{
-		while ((count = read(pipes_container[0], buffer, STANDART_SIZE)) == -1)
-		{
-			if (errno != EINTR)
-			{
-				perror("read(3)");
-				return 3;
-			}
-		}
 		change_to_upper(buffer, count);
+		printf("%s\n", buffer);
+		if (write(pipes_container[1], buffer, strlen(buffer) + 1) == -1)
+		{
+			perror("write(3)");
+			close_pipes(pipes_container);
+			return 4;
+		}
 		printf("%s\n", buffer);
 		close_pipes(pipes_container);
 		int status;
