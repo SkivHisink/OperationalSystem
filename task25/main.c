@@ -88,9 +88,11 @@ int main()
 	{
 		int res = redirect(pipes_container[1], STDOUT_FILENO, change_to_upper);
 		close_pipes(pipes_container);
+		printf("work");
+		return res ? 1 : 0;
+	}
 		int status;
 		pid_t ChildPid;
-
 		do
 		{
 			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
@@ -111,14 +113,7 @@ int main()
 			{
 				printf("Signal is stopped. Signal that caused the child process to stop is %d\n", WSTOPSIG(status));//If WIFSTOPPED is true of status, this macro returns the signal number of the signal that caused the child process to stop.
 			}
-			else if (WIFCONTINUED(status)) //Given status from a call to waitpid, return true if the child process was resumed by delivery of SIGCOUNT.
-			{
-				printf("Child process was resumed\n");
-			}
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-		return res ? 1 : 0;
-	}
-	}
+			else if (WIFCONTINUED(status)) //Given status f
 	if (redirect(STDIN_FILENO, pipes_container[0], mock_func))
 	{
 		close_pipes(pipes_container);
