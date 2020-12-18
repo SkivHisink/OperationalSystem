@@ -67,7 +67,7 @@ int wait_for_child()
 	return 0;
 }
 
-int сommViaPipe()
+int commViaPipe()
 {
 	int pipes_container[2];
 
@@ -127,7 +127,7 @@ int сommViaPipe()
 	if (wait_for_child())
 	{
 		perror("Error while waiting);
-			close_pipe(p_filedes);
+		close_pipe(p_filedes);
 		return 7;
 	}
 	close_pipes(pipes_container);
@@ -136,5 +136,5 @@ int сommViaPipe()
 
 int main()
 {
-	return сommViaPipe();
+	return commViaPipe();
 }
