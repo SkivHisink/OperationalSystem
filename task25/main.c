@@ -6,104 +6,131 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-#define BUF_SIZE ((size_t)1024)
+#define STANDART_SIZE 1024
 
-void make_upper(char* buff, size_t n)
+void change_to_upper(char* buff, size_t n)
 {
-	for(size_t i = 0; i < n; ++i)
+	for (size_t i = 0; i < n; ++i)
 		buff[i] = toupper(buff[i]);
 }
-void void_editor(char* a, size_t b)
-{
-}
+
 int redirect(int read_fd, int write_fd, void (*editor)(char*, size_t))
 {
-	errno = 0;
-	char buf[BUF_SIZE] = {0};
+	char buffer[STANDART_SIZE] = { 0 };
 	ssize_t count = 0;
 
-	while ((count = read(read_fd, buf, BUF_SIZE)) == -1)
+	while ((count = read(read_fd, buffer, STANDART_SIZE)) == -1)
 	{
-		if(errno == EINTR)
+		if (errno != EINTR)
 		{
-			errno = 0;
-			continue;
+			perror("read(3)");
+			return 3;
 		}
-		perror("redirect() - error in reading from pipe");
-		return -1;
 	}
-	editor(buf, count);
+	editor(buffer, count);
 
-	if (write(write_fd, buf, count) == -1)
+	if (write(write_fd, buffer, count) == -1)
 	{
-		perror("redirect() - error while writing to write_fd");
-		return -2;
+		perror("write(3)");
+		return 4;
 	}
 	return 0;
 }
-void close_pipe(int pfildes[2])
+
+void close_pipes(int pipes_container[2])
 {
-	if(close(pfildes[0]) == -1 || close(pfildes[1]) == -1)
+	if (close(pipes[0]) == -1)
 	{
-		perror("Error in closing pipe");
+		printf("Failed to close pipe[0]\n");
+	}
+	if (close(pipes[1]) == -1)
+	{
+		printf("Failed to close pipe[1]\n");
 	}
 }
+
 int wait_for_child()
 {
 	int ch_stat;
-	errno = 0;
-	while(wait(&ch_stat) == -1)
+	while (wait(&ch_stat) == -1)
 	{
-		if(errno == EINTR)
+		if (errno != EINTR)
 		{
-			errno = 0;
-			continue;
+			perror("wait(1)");
+			return 5;
 		}
+	}
+	return 0;
+}
+
+int сommunication_via_pipe()
+{
+	int pipes_container[2];
+
+	if (pipe(pipes_container) == -1)
+	{
+		perror("pipe(1)");
 		return -1;
 	}
+	pid_t child = fork();
+	switch (child) {
+	case -1:
+	{
+		perror("Error in fork");
+		close_pipes(pipes_container);
+		return 1;
+	}
+	case 0:
+	{
+		int res = redirect(pipes_container[1], STDOUT_FILENO, change_to_upper);
+		close_pipes(pipes_container);
+		int status;
+		pid_t ChildPid;
+
+		do
+		{
+			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
+			if (ChildPid == -1)
+			{
+				perror("waitpid(3) error:");
+				return 3;
+			}
+			if (WIFEXITED(status))//This macro returns a nonzero value if the child process terminated normally with exit or _exit.
+			{
+				printf("Low-order 8 bits of the exit status value from the child process %d\n", WEXITSTATUS(status)); //If WIFEXITED is true of status, this macro returns the low-order 8 bits of the exit status value from the child process. See Exit Status.
+			}
+			else if (WIFSIGNALED(status))//This macro returns a nonzero value if the child process terminated because it received a signal that was not handled. See Signal Handling.
+			{
+				printf("Signal number of the signal that terminated the child process is %d\n", WTERMSIG(status));//If WIFSIGNALED is true of status, this macro returns the signal number of the signal that terminated the child process.
+			}
+			else if (WIFSTOPPED(status))//This macro returns a nonzero value if the child process is stopped.
+			{
+				printf("Signal is stopped. Signal that caused the child process to stop is %d\n", WSTOPSIG(status));//If WIFSTOPPED is true of status, this macro returns the signal number of the signal that caused the child process to stop.
+			}
+			else if (WIFCONTINUED(status)) //Given status from a call to waitpid, return true if the child process was resumed by delivery of SIGCOUNT.
+			{
+				printf("Child process was resumed\n");
+			}
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		return res ? 1 : 0;
+	}
+	}
+	if (redirect(STDIN_FILENO, pipes_container[0], void_editor))
+	{
+		close_pipes(pipes_container);
+		return EXIT_FAILURE;
+	}
+	if (wait_for_child())
+	{
+		perror("Error while waiting);
+			close_pipe(p_filedes);
+		return EXIT_FAILURE;
+	}
+	close_pipes(pipes_container);
 	return 0;
 }
 
 int main()
 {
-	int p_filedes[2];
-
-	if(pipe(p_filedes) == -1)
-	{
-		perror("Error in initializing pipe");
-		return -1;
-	}
-	pid_t rpid = fork();
-
-	if(rpid == -1)
-	{
-		perror("Error in fork");
-		close_pipe(p_filedes);
-		return -1;
-	}
-	else if(rpid == 0)
-	{
-		int res = redirect(p_filedes[1], STDOUT_FILENO, make_upper)
-			? EXIT_FAILURE
-			: EXIT_SUCCESS;
-		close_pipe(p_filedes);
-
-		return res;
-	}
-	//-----------------------------------------------------------//
-	//	* Parent branch
-	//
-	if (redirect(STDIN_FILENO, p_filedes[0], void_editor))
-	{
-		close_pipe(p_filedes);
-		return EXIT_FAILURE;
-	}
-	if (wait_for_child())
-	{
-		perror("Error while waitin child process");
-		close_pipe(p_filedes);
-		return EXIT_FAILURE;
-	}
-	close_pipe(p_filedes);
-	return EXIT_SUCCESS;
+	return сommunication_via_pipe();
 }
