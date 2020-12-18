@@ -1,18 +1,12 @@
-#include <unistd.h>
-#include <string.h>
 #include <stdio.h>
 #include <errno.h>
-#include <ctype.h>
-#include <sys/wait.h>
 #include <stdlib.h>
-
-#define STANDART_SIZE 1024
-
-void change_to_upper(char* buff, size_t n)
-{
-	for (size_t i = 0; i < n; ++i)
-		buff[i] = toupper(buff[i]);
-}
+#include <unistd.h>
+#include <wait.h>
+#include <sys/types.h>
+#include <ctype.h>
+#include <string.h>
+#define STANDART_SIZE 256
 
 void close_pipes(int pipes_container[2])
 {
@@ -25,28 +19,32 @@ void close_pipes(int pipes_container[2])
 		printf("Failed to close pipe[1]\n");
 	}
 }
-
-int main()
+void change_to_upper(char* buff, size_t n)
 {
-	int pipes_container[2];
+	for (size_t i = 0; i < n; ++i)
+		buff[i] = toupper(buff[i]);
+}
 
-	if (pipe(pipes_container) == -1)
+int main(int argc, char* argv[])
+{
+	char buffer[STANDART_SIZE] = "";
+	int pipes[2];
+	if (pipe(pipes) == -1)
 	{
 		perror("pipe(1)");
 		return -1;
 	}
-	char buffer[STANDART_SIZE] = { 0 };
-	ssize_t count = 0;
-	pid_t child = fork();
-	switch (child) {
+	pid_t child = fork(); 
+	switch(child){
 	case -1:
 	{
-		perror("Error in fork");
-		close_pipes(pipes_container);
-		return 1;
+		perror("fork()");
+		close_pipes(pipes);
+		return 2;
 	}
-	case 0:
+	case 0: 
 	{
+		
 		while ((count = read(pipes_container[0], buffer, STANDART_SIZE)) == -1)
 		{
 			if (errno != EINTR)
@@ -56,22 +54,24 @@ int main()
 			}
 		}
 		change_to_upper(buffer, count);
-		close_pipes(pipes_container);
-		return 0;
+		printf("%s", buffer);
+		close_pipes(pipes);
+
+		return 1;
 	}
 	default:
-		if (write(pipes_container[1], buffer, count) == -1)
+	{
+		if (write(pipes[1], buffer, strlen(buffer) + 1) == -1)
 		{
 			perror("write(3)");
+			close_pipes(pipes);
 			return 4;
 		}
-		close_pipes(pipes_container);
+		close_pipes(pipes);
 		int status;
-		pid_t ChildPid;
-
 		do
 		{
-			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
+			pid_t ChildPid = waitpid(child, &status, 0);
 			if (ChildPid == -1)
 			{
 				perror("waitpid(3)");
@@ -95,7 +95,5 @@ int main()
 			}
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
-	}
-	close_pipes(pipes_container);
 	return 0;
 }
