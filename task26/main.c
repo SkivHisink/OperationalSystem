@@ -17,16 +17,16 @@ int comm_using_std_lib_funcs(FILE* input)
 
 	if (ferror(input) == -1)
 	{
-		perror("fread()");
+		perror("fread(3)");
 		if (pclose(input) == -1)
 		{
-			perror("pclose() error");
+			perror("pclose(1)");
 		}
 		return 2;
 	}
 	if (pclose(input) == -1)
 	{
-		perror("pclose() error");
+		perror("pclose(1)");
 		return 3;
 	}
 	change_to_upper(buffer, count);
@@ -34,7 +34,7 @@ int comm_using_std_lib_funcs(FILE* input)
 
 	if (ferror(input) == -1)
 	{
-		perror("fwrite() error");
+		perror("fwrite(3)");
 		return 4;
 	}
 	return 0;
@@ -45,7 +45,7 @@ int main()
 	FILE* input = popen("cat file.txt", "r");
 	if (input == NULL)
 	{
-		perror("popen() error");
+		perror("popen(2)");
 		return 1;
 	}
 	return comm_using_std_lib_funcs(input);
