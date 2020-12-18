@@ -28,23 +28,24 @@ void change_to_upper(char* buff, size_t n)
 int main(int argc, char* argv[])
 {
 	char buffer[STANDART_SIZE] = "";
+	int count = 0;
 	int pipes[2];
 	if (pipe(pipes) == -1)
 	{
 		perror("pipe(1)");
 		return -1;
 	}
-	pid_t child = fork(); 
-	switch(child){
+	pid_t child = fork();
+	switch (child) {
 	case -1:
 	{
 		perror("fork()");
 		close_pipes(pipes);
 		return 2;
 	}
-	case 0: 
+	case 0:
 	{
-		
+
 		while ((count = read(pipes_container[0], buffer, STANDART_SIZE)) == -1)
 		{
 			if (errno != EINTR)
@@ -96,4 +97,4 @@ int main(int argc, char* argv[])
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 	return 0;
-}
+	}
