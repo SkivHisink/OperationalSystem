@@ -67,7 +67,7 @@ int wait_for_child()
 	return 0;
 }
 
-int commViaPipe()
+int main()
 {
 	int pipes_container[2];
 
@@ -94,7 +94,7 @@ int commViaPipe()
 		do
 		{
 			ChildPid = waitpid(child, &status, 0);// wait for child process to change state
-			if (!ChildPid == -1)
+			if (ChildPid == -1)
 			{
 				perror("waitpid(3)");
 				return 3;
@@ -132,9 +132,4 @@ int commViaPipe()
 	}
 	close_pipes(pipes_container);
 	return 0;
-}
-
-int main()
-{
-	return commViaPipe();
 }
