@@ -97,5 +97,6 @@ int main(int argc, char* argv[])
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 		break;
 	}
-	return 0;
 	}
+	return 0;
+}
