@@ -67,7 +67,7 @@ int wait_for_child()
 	return 0;
 }
 
-int сommunication_via_pipe()
+int сomm_via_pipe()
 {
 	int pipes_container[2];
 
@@ -122,13 +122,13 @@ int сommunication_via_pipe()
 	if (redirect(STDIN_FILENO, pipes_container[0], mock_func))
 	{
 		close_pipes(pipes_container);
-		return EXIT_FAILURE;
+		return 6;
 	}
 	if (wait_for_child())
 	{
 		perror("Error while waiting);
 			close_pipe(p_filedes);
-		return EXIT_FAILURE;
+		return 7;
 	}
 	close_pipes(pipes_container);
 	return 0;
@@ -136,5 +136,5 @@ int сommunication_via_pipe()
 
 int main()
 {
-	return сommunication_via_pipe();
+	return сomm_via_pipe();
 }
