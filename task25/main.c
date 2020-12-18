@@ -14,13 +14,6 @@ void change_to_upper(char* buff, size_t n)
 		buff[i] = toupper(buff[i]);
 }
 
-int redirect(int read_fd, int write_fd, void (*editor)(char*, size_t))
-{
-
-	
-	return 0;
-}
-
 void close_pipes(int pipes_container[2])
 {
 	if (close(pipes_container[0]) == -1)
