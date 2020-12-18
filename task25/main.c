@@ -136,5 +136,5 @@ int сommViaPipe()
 
 int main()
 {
-	return сomm_via_pipe();
+	return сommViaPipe();
 }
