@@ -8,13 +8,13 @@
 #include <string.h>
 #define STANDART_SIZE 256
 
-void close_pipes(int pipes_container[2])
+void close_pipes_container(int pipes_container_container[2])
 {
-	if (close(pipes_container[0]) == -1)
+	if (close(pipes_container_container[0]) == -1)
 	{
 		printf("Failed to close pipe[0]\n");
 	}
-	if (close(pipes_container[1]) == -1)
+	if (close(pipes_container_container[1]) == -1)
 	{
 		printf("Failed to close pipe[1]\n");
 	}
@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
 {
 	char buffer[STANDART_SIZE] = "";
 	int count = 0;
-	int pipes[2];
-	if (pipe(pipes) == -1)
+	int pipes_container_container[2];
+	if (pipe(pipes_container_container) == -1)
 	{
 		perror("pipe(1)");
 		return -1;
@@ -40,13 +40,13 @@ int main(int argc, char* argv[])
 	case -1:
 	{
 		perror("fork()");
-		close_pipes(pipes);
+		close_pipes_container(pipes_container);
 		return 2;
 	}
 	case 0:
 	{
 
-		while ((count = read(pipes_container[0], buffer, STANDART_SIZE)) == -1)
+		while ((count = read(pipes_container_container[0], buffer, STANDART_SIZE)) == -1)
 		{
 			if (errno != EINTR)
 			{
@@ -56,19 +56,19 @@ int main(int argc, char* argv[])
 		}
 		change_to_upper(buffer, count);
 		printf("%s", buffer);
-		close_pipes(pipes);
+		close_pipes_container(pipes_container);
 
 		return 1;
 	}
 	default:
 	{
-		if (write(pipes[1], buffer, strlen(buffer) + 1) == -1)
+		if (write(pipes_container[1], buffer, strlen(buffer) + 1) == -1)
 		{
 			perror("write(3)");
-			close_pipes(pipes);
+			close_pipes_container(pipes_container);
 			return 4;
 		}
-		close_pipes(pipes);
+		close_pipes_container(pipes_container);
 		int status;
 		do
 		{
@@ -95,6 +95,7 @@ int main(int argc, char* argv[])
 				printf("Child process was resumed\n");
 			}
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		break;
 	}
 	return 0;
 	}
