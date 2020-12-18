@@ -39,11 +39,11 @@ int redirect(int read_fd, int write_fd, void (*editor)(char*, size_t))
 
 void close_pipes(int pipes_container[2])
 {
-	if (close(pipes[0]) == -1)
+	if (close(pipes_container[0]) == -1)
 	{
 		printf("Failed to close pipe[0]\n");
 	}
-	if (close(pipes[1]) == -1)
+	if (close(pipes_container[1]) == -1)
 	{
 		printf("Failed to close pipe[1]\n");
 	}
