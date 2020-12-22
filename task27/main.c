@@ -19,22 +19,11 @@ int blank_counter()
 		perror("fgets");
 		return 2;
 	}
-	
-	int status = pclose(pipe);
-	if (status == -1) 
-  {
+	if (pclose(pipe)) 
+  	{
 		perror("pclose");
 		return 3;
 	}
-	else if (WEXITSTATUS(status)) 
-  {
-		printf("Low-order 8 bits of the exit status value from the child process %d\n", WEXITSTATUS(status)); //If WIFEXITED is true of status, this macro returns the low-order 8 bits of the exit status value from the child process. See Exit Status.
-	}
-	else if (WIFSIGNALED(status))
-  {
-		printf("Signal number of the signal that terminated the child process is %d\n", WTERMSIG(status));//If WIFSIGNALED is true of status, this macro returns the signal number of the signal that terminated the child process.
-	}
-	
 	printf("Count of blank lines is %ld\n", strtol(stringNumber, &end_ptr, 10));
 	return 0;
 }
