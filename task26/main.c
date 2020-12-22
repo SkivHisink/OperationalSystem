@@ -4,13 +4,14 @@
 
 #define STANDART_SIZE 100
 
+
 void change_to_upper(char* buff, size_t n)
 {
 	for (size_t i = 0; i < n; ++i)
 		buff[i] = toupper(buff[i]);
 }
 
-int comm_using_std_lib_funcs(FILE* input) 
+int comm_using_std_lib_funcs(FILE* input)
 {
 	char buffer[STANDART_SIZE];
 	size_t count = fread(buffer, sizeof(char), STANDART_SIZE, input);
@@ -24,10 +25,26 @@ int comm_using_std_lib_funcs(FILE* input)
 		}
 		return 2;
 	}
-	if (pclose(input) == -1)
+	int status = pclose(input);
+	if (status == -1)
 	{
 		perror("pclose(1)");
 		return 3;
+	}
+	else
+	{
+		if (WIFEXITED(status))
+		{
+			printf("Child terminated normally, status = %d\n", WEXITSTATUS(status));
+		}
+		else if (WIFSIGNALED(status))
+		{
+			printf("Killed by signal with number %d\n", WTERMSIG(status));
+		}
+		else if (WIFSTOPPED(status))
+		{
+			printf("stopped by signal %d\n", WSTOPSIG(status));
+		}
 	}
 	change_to_upper(buffer, count);
 	fwrite(buffer, count, 1, stdout);
