@@ -6,7 +6,7 @@
 int blank_counter()
 {
 	FILE* pipe;
-	if ((pipe = popen("grep ^$ ./text | wc -l ", "r")) == NULL)// he popen() function opens a process by creating a pipe, forking, and invoking the shell. Since a pipe is by definition unidirectional, the type argument may specify only reading or writing, not both; the resulting stream is correspondingly read-only or write-only.
+	if ((pipe = popen("grep ^$ file.txt | wc -l ", "r")) == NULL)// he popen() function opens a process by creating a pipe, forking, and invoking the shell. Since a pipe is by definition unidirectional, the type argument may specify only reading or writing, not both; the resulting stream is correspondingly read-only or write-only.
 	{
 		perror("popen(2):");
 		return 1;
