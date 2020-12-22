@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -19,11 +20,28 @@ int blank_counter()
 		perror("fgets");
 		return 2;
 	}
-	if (pclose(pipe)) 
-  	{
-		perror("pclose");
+	int status = pclose(pipe);
+	if (status == -1)
+	{
+		perror("Failed to pclose\n");
 		return 3;
 	}
+	else
+	{
+		if (WIFEXITED(status))
+		{
+			printf("Child terminated normally, status = %d\n", WEXITSTATUS(status));
+		}
+		else if (WIFSIGNALED(status))
+		{
+			printf("Killed by signal with number %d\n", WTERMSIG(status));
+		}
+		else if (WIFSTOPPED(status))
+		{
+			printf("stopped by signal %d\n", WSTOPSIG(status));
+		}
+	}
+
 	printf("Count of blank lines is %ld\n", strtol(stringNumber, &end_ptr, 10));
 	return 0;
 }
